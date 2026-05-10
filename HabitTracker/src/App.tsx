@@ -84,6 +84,10 @@ function App() {
       <p>Completed Today: {completedHabits}</p>
       <p>Progress: {progress}%</p>
 
+      <div className="progress-bar">
+        <div className="progress-fill" style={{ width: `${progress}%` }}></div>
+      </div>
+
       <input
         type="text"
         placeholder="Enter a habit"
