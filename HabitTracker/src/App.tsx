@@ -1,122 +1,133 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from './assets/vite.svg'
-import heroImg from './assets/hero.png'
-import './App.css'
+import { useEffect, useState } from "react";
 
-function App() {
-  const [count, setCount] = useState(0)
-
-  return (
-    <>
-      <section id="center">
-        <div className="hero">
-          <img src={heroImg} className="base" width="170" height="179" alt="" />
-          <img src={reactLogo} className="framework" alt="React logo" />
-          <img src={viteLogo} className="vite" alt="Vite logo" />
-        </div>
-        <div>
-          <h1>Get started</h1>
-          <p>
-            Edit <code>src/App.tsx</code> and save to test <code>HMR</code>
-          </p>
-        </div>
-        <button
-          type="button"
-          className="counter"
-          onClick={() => setCount((count) => count + 1)}
-        >
-          Count is {count}
-        </button>
-      </section>
-
-      <div className="ticks"></div>
-
-      <section id="next-steps">
-        <div id="docs">
-          <svg className="icon" role="presentation" aria-hidden="true">
-            <use href="/icons.svg#documentation-icon"></use>
-          </svg>
-          <h2>Documentation</h2>
-          <p>Your questions, answered</p>
-          <ul>
-            <li>
-              <a href="https://vite.dev/" target="_blank">
-                <img className="logo" src={viteLogo} alt="" />
-                Explore Vite
-              </a>
-            </li>
-            <li>
-              <a href="https://react.dev/" target="_blank">
-                <img className="button-icon" src={reactLogo} alt="" />
-                Learn more
-              </a>
-            </li>
-          </ul>
-        </div>
-        <div id="social">
-          <svg className="icon" role="presentation" aria-hidden="true">
-            <use href="/icons.svg#social-icon"></use>
-          </svg>
-          <h2>Connect with us</h2>
-          <p>Join the Vite community</p>
-          <ul>
-            <li>
-              <a href="https://github.com/vitejs/vite" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#github-icon"></use>
-                </svg>
-                GitHub
-              </a>
-            </li>
-            <li>
-              <a href="https://chat.vite.dev/" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#discord-icon"></use>
-                </svg>
-                Discord
-              </a>
-            </li>
-            <li>
-              <a href="https://x.com/vite_js" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#x-icon"></use>
-                </svg>
-                X.com
-              </a>
-            </li>
-            <li>
-              <a href="https://bsky.app/profile/vite.dev" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#bluesky-icon"></use>
-                </svg>
-                Bluesky
-              </a>
-            </li>
-          </ul>
-        </div>
-      </section>
-
-      <div className="ticks"></div>
-      <section id="spacer"></section>
-    </>
-  )
+interface Habit {
+  name: string;
+  completed: boolean;
+  streak: number;
+  lastCompletedDate: string | null;
 }
 
-export default App
+function App() {
+  const [habitName, setHabitName] = useState("");
+  const [habits, setHabits] = useState<Habit[]>([]);
+
+  useEffect(() => {
+    const savedHabits = localStorage.getItem("habits");
+    if (savedHabits) {
+      setHabits(JSON.parse(savedHabits));
+    }
+  }, []);
+
+  useEffect(() => {
+    localStorage.setItem("habits", JSON.stringify(habits));
+  }, [habits]);
+
+  const addHabit = () => {
+    if (habitName.trim() === "") return;
+
+    const newHabit: Habit = {
+      name: habitName,
+      completed: false,
+      streak: 0,
+      lastCompletedDate: null,
+    };
+
+    setHabits([...habits, newHabit]);
+    setHabitName("");
+  };
+
+  const deleteHabit = (indexToDelete: number) => {
+    const updatedHabits = habits.filter((_, index) => index !== indexToDelete);
+    setHabits(updatedHabits);
+  };
+
+  const toggleHabit = (indexToToggle: number) => {
+    const today = new Date().toDateString();
+
+    const updatedHabits = habits.map((habit, index) => {
+      if (index !== indexToToggle) {
+        return habit;
+      }
+
+      const newCompleted = !habit.completed;
+      let newStreak = habit.streak;
+      let newLastCompletedDate = habit.lastCompletedDate;
+
+      if (newCompleted && habit.lastCompletedDate !== today) {
+        newStreak = habit.streak + 1;
+        newLastCompletedDate = today;
+      }
+
+      return {
+        ...habit,
+        completed: newCompleted,
+        streak: newStreak,
+        lastCompletedDate: newLastCompletedDate,
+      };
+    });
+
+    setHabits(updatedHabits);
+  };
+
+  const totalHabits = habits.length;
+  const completedHabits = habits.filter((habit) => habit.completed).length;
+
+  const progress =
+    totalHabits === 0 ? 0 : Math.round((completedHabits / totalHabits) * 100);
+
+  return (
+    <div className="app-container">
+      <h1>Habit Tracker</h1>
+
+      <h3>📊 Progress Summary</h3>
+      <p>Total Habits: {totalHabits}</p>
+      <p>Completed Today: {completedHabits}</p>
+      <p>Progress: {progress}%</p>
+
+      <input
+        type="text"
+        placeholder="Enter a habit"
+        value={habitName}
+        onChange={(e) => setHabitName(e.target.value)}
+      />
+
+      <button onClick={addHabit} style={{ marginLeft: "10px" }}>
+        Add Habit
+      </button>
+
+      <ul>
+        {habits.map((habit, index) => (
+          <li key={index}>
+            <input
+              type="checkbox"
+              checked={habit.completed}
+              onChange={() => toggleHabit(index)}
+            />
+
+            <span
+              style={{
+                marginLeft: "10px",
+                textDecoration: habit.completed ? "line-through" : "none",
+              }}
+            >
+              {habit.name}
+            </span>
+
+            <span style={{ marginLeft: "10px" }}>
+              🔥 {habit.streak} day{habit.streak !== 1 ? "s" : ""}
+            </span>
+
+            <button
+              onClick={() => deleteHabit(index)}
+              style={{ marginLeft: "10px" }}
+            >
+              Delete
+            </button>
+          </li>
+        ))}
+      </ul>
+    </div>
+  );
+}
+
+export default App;
