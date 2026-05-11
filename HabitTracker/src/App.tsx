@@ -112,11 +112,24 @@ function App() {
   );
 
   return (
-    <div className={`app-container ${darkMode ? "dark" : ""}`}>
+    <div
+      className="app-container"
+      style={{
+        backgroundColor: darkMode ? "#1f2937" : "white",
+        color: darkMode ? "white" : "black",
+      }}
+    >
       <h1>Habit Tracker</h1>
       <button
         onClick={() => setDarkMode(!darkMode)}
-        style={{ marginBottom: "20px" }}
+        style={{
+          marginBottom: "20px",
+          backgroundColor: darkMode ? "#374151" : "white",
+          color: darkMode ? "white" : "black",
+          border: "1px solid gray",
+          padding: "8px 12px",
+          borderRadius: "8px",
+        }}
       >
         {darkMode ? "☀️ Light Mode" : "🌙 Dark Mode"}
       </button>
@@ -134,7 +147,12 @@ function App() {
         placeholder="Search habits..."
         value={searchTerm}
         onChange={(e) => setSearchTerm(e.target.value)}
-        style={{ marginBottom: "10px", width: "100%", padding: "8px" }}
+        style={{
+          backgroundColor: darkMode ? "#374151" : "white",
+          color: darkMode ? "white" : "black",
+          border: "1px solid gray",
+          padding: "8px",
+        }}
       />
 
       <input
@@ -142,6 +160,12 @@ function App() {
         placeholder="Enter a habit"
         value={habitName}
         onChange={(e) => setHabitName(e.target.value)}
+        style={{
+          backgroundColor: darkMode ? "#374151" : "white",
+          color: darkMode ? "white" : "black",
+          border: "1px solid gray",
+          padding: "8px",
+        }}
       />
 
       <button onClick={addHabit} style={{ marginLeft: "10px" }}>
