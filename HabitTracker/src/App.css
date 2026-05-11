@@ -1,47 +1,219 @@
-body {
-  margin: 0;
-  font-family: Arial, sans-serif;
-  background-color: #f4f6f8;
+/* Reset */
+* {
+  box-sizing: border-box;
 }
 
-.app-container {
-  max-width: 700px;
-  margin: 40px auto;
-  background: white;
+body {
+  margin: 0;
+  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  min-height: 100vh;
   padding: 30px;
-  border-radius: 16px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+/* Main Card */
+.app-container {
+  max-width: 800px;
+  margin: 0 auto;
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(10px);
+  border-radius: 24px;
+  padding: 40px;
+  box-shadow:
+    0 20px 60px rgba(0, 0, 0, 0.15),
+    0 8px 20px rgba(0, 0, 0, 0.08);
+  transition: all 0.3s ease;
+}
+
+.app-container:hover {
+  transform: translateY(-3px);
+}
+
+/* Dark Mode */
+.app-container.dark {
+  background: rgba(31, 41, 55, 0.95);
+  color: #f9fafb;
+}
+
+/* Headings */
+h1 {
+  text-align: center;
+  font-size: 3rem;
+  margin-bottom: 10px;
+  color: #4f46e5;
+  font-weight: 700;
+}
+
+.app-container.dark h1 {
+  color: #a5b4fc;
+}
+
+h3 {
+  margin-top: 30px;
+  margin-bottom: 15px;
+  color: #374151;
+}
+
+.app-container.dark h3 {
+  color: #e5e7eb;
+}
+
+/* Summary Cards */
+p {
+  margin: 8px 0;
+  font-size: 1rem;
+}
+
+/* Inputs */
+input[type="text"] {
+  width: 100%;
+  padding: 14px 16px;
+  border: 2px solid #e5e7eb;
+  border-radius: 12px;
+  font-size: 1rem;
+  outline: none;
+  transition: all 0.3s ease;
+  margin-bottom: 12px;
+}
+
+input[type="text"]:focus {
+  border-color: #6366f1;
+  box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.15);
+}
+
+.app-container.dark input[type="text"] {
+  background: #374151;
+  color: white;
+  border-color: #4b5563;
+}
+
+/* Buttons */
+button {
+  border: none;
+  border-radius: 10px;
+  padding: 10px 16px;
+  font-size: 0.95rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.25s ease;
+}
+
+button:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 6px 14px rgba(0, 0, 0, 0.12);
+}
+
+button:active {
+  transform: scale(0.98);
+}
+
+/* Add Habit Button */
+button[onclick],
+button {
+  background: linear-gradient(135deg, #4f46e5, #7c3aed);
+  color: white;
+}
+
+.app-container.dark button {
+  background: linear-gradient(135deg, #6366f1, #8b5cf6);
 }
 
 /* Progress Bar */
 .progress-bar {
   width: 100%;
-  height: 20px;
-  background-color: #e5e7eb;
-  border-radius: 10px;
+  height: 22px;
+  background: #e5e7eb;
+  border-radius: 999px;
   overflow: hidden;
-  margin-bottom: 20px;
+  margin: 15px 0 25px;
 }
 
 .progress-fill {
   height: 100%;
-  background-color: #22c55e;
-  transition: width 0.3s ease;
-}
-
-/* Dark Mode */
-.app-container.dark {
-  background-color: #1f2937;
-  color: white;
-}
-
-.app-container.dark input,
-.app-container.dark button {
-  background-color: #374151;
-  color: white;
-  border: 1px solid #6b7280;
+  background: linear-gradient(90deg, #22c55e, #16a34a);
+  border-radius: 999px;
+  transition: width 0.5s ease;
 }
 
 .app-container.dark .progress-bar {
-  background-color: #4b5563;
+  background: #4b5563;
+}
+
+/* Habit List */
+ul {
+  list-style: none;
+  padding: 0;
+  margin-top: 25px;
+}
+
+li {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 16px 18px;
+  margin-bottom: 12px;
+  background: #f9fafb;
+  border: 1px solid #e5e7eb;
+  border-radius: 16px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.04);
+  transition: all 0.3s ease;
+}
+
+li:hover {
+  transform: translateX(4px);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
+}
+
+.app-container.dark li {
+  background: #374151;
+  border-color: #4b5563;
+}
+
+/* Checkbox */
+input[type="checkbox"] {
+  width: 20px;
+  height: 20px;
+  cursor: pointer;
+}
+
+/* Habit Name */
+li span:nth-of-type(1) {
+  flex: 1;
+  font-size: 1.05rem;
+  font-weight: 500;
+}
+
+/* Streak Badge */
+li span:nth-of-type(2) {
+  background: #fff7ed;
+  color: #ea580c;
+  padding: 6px 10px;
+  border-radius: 999px;
+  font-size: 0.85rem;
+  font-weight: 600;
+}
+
+.app-container.dark li span:nth-of-type(2) {
+  background: #7c2d12;
+  color: #fdba74;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  body {
+    padding: 15px;
+  }
+
+  .app-container {
+    padding: 25px;
+    border-radius: 20px;
+  }
+
+  h1 {
+    font-size: 2.2rem;
+  }
+
+  li {
+    flex-wrap: wrap;
+  }
 }

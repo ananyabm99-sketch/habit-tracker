@@ -119,7 +119,9 @@ function App() {
         color: darkMode ? "white" : "black",
       }}
     >
-      <h1>Habit Tracker</h1>
+      <p style={{ textAlign: "center", color: "gray", marginBottom: "30px" }}>
+        Build better habits, one day at a time.
+      </p>
       <button
         onClick={() => setDarkMode(!darkMode)}
         style={{
