@@ -1,3 +1,4 @@
+import "./App.css";
 import { useEffect, useState } from "react";
 
 interface Habit {
@@ -112,108 +113,88 @@ function App() {
   );
 
   return (
-    <div
-      className="app-container"
-      style={{
-        backgroundColor: darkMode ? "#1f2937" : "white",
-        color: darkMode ? "white" : "black",
-      }}
-    >
-      <p style={{ textAlign: "center", color: "gray", marginBottom: "30px" }}>
-        Build better habits, one day at a time.
-      </p>
-      <button
-        onClick={() => setDarkMode(!darkMode)}
-        style={{
-          marginBottom: "20px",
-          backgroundColor: darkMode ? "#374151" : "white",
-          color: darkMode ? "white" : "black",
-          border: "1px solid gray",
-          padding: "8px 12px",
-          borderRadius: "8px",
-        }}
-      >
+    <div className={`app-container ${darkMode ? "dark" : ""}`}>
+      {/* Header */}
+      <h1>🌟 Habit Tracker</h1>
+      <p className="subtitle">Build better habits, one day at a time.</p>
+
+      {/* Dark Mode Button */}
+      <button className="theme-toggle" onClick={() => setDarkMode(!darkMode)}>
         {darkMode ? "☀️ Light Mode" : "🌙 Dark Mode"}
       </button>
 
-      <h3>📊 Progress Summary</h3>
-      <p>Total Habits: {totalHabits}</p>
-      <p>Completed Today: {completedHabits}</p>
-      <p>Progress: {progress}%</p>
+      {/* Progress Summary */}
+      <div className="summary-card">
+        <h3>📊 Progress Summary</h3>
+        <p>Total Habits: {totalHabits}</p>
+        <p>Completed Today: {completedHabits}</p>
+        <p>Progress: {progress}%</p>
 
-      <div className="progress-bar">
-        <div className="progress-fill" style={{ width: `${progress}%` }}></div>
+        <div className="progress-bar">
+          <div
+            className="progress-fill"
+            style={{ width: `${progress}%` }}
+          ></div>
+        </div>
       </div>
+
+      {/* Search Box */}
       <input
+        className="search-box"
         type="text"
-        placeholder="Search habits..."
+        placeholder="🔍 Search habits..."
         value={searchTerm}
         onChange={(e) => setSearchTerm(e.target.value)}
-        style={{
-          backgroundColor: darkMode ? "#374151" : "white",
-          color: darkMode ? "white" : "black",
-          border: "1px solid gray",
-          padding: "8px",
-        }}
       />
 
-      <input
-        type="text"
-        placeholder="Enter a habit"
-        value={habitName}
-        onChange={(e) => setHabitName(e.target.value)}
-        style={{
-          backgroundColor: darkMode ? "#374151" : "white",
-          color: darkMode ? "white" : "black",
-          border: "1px solid gray",
-          padding: "8px",
-        }}
-      />
+      {/* Add Habit Section */}
+      <div className="input-section">
+        <input
+          type="text"
+          placeholder="✨ Enter a new habit"
+          value={habitName}
+          onChange={(e) => setHabitName(e.target.value)}
+        />
 
-      <button onClick={addHabit} style={{ marginLeft: "10px" }}>
-        Add Habit
-      </button>
+        <button onClick={addHabit}>➕ Add Habit</button>
+      </div>
 
-      <ul>
-        {filteredHabits.map((habit, index) => (
-          <li key={index}>
-            <input
-              type="checkbox"
-              checked={habit.completed}
-              onChange={() => toggleHabit(index)}
-            />
+      {/* Empty State or Habit List */}
+      {filteredHabits.length === 0 ? (
+        <div className="empty-state">
+          <h3>🎯 No habits found</h3>
+          <p>Add your first habit and start building consistency!</p>
+        </div>
+      ) : (
+        <ul>
+          {filteredHabits.map((habit, index) => (
+            <li key={index}>
+              <input
+                type="checkbox"
+                checked={habit.completed}
+                onChange={() => toggleHabit(index)}
+              />
 
-            <span
-              style={{
-                marginLeft: "10px",
-                textDecoration: habit.completed ? "line-through" : "none",
-              }}
-            >
-              {habit.name}
-            </span>
+              <span
+                style={{
+                  textDecoration: habit.completed ? "line-through" : "none",
+                }}
+              >
+                {habit.name}
+              </span>
 
-            <span style={{ marginLeft: "10px" }}>
-              🔥 {habit.streak} day{habit.streak !== 1 ? "s" : ""}
-            </span>
+              <span>
+                🔥 {habit.streak} day{habit.streak !== 1 ? "s" : ""}
+              </span>
 
-            <button
-              onClick={() => editHabit(index)}
-              style={{ marginLeft: "10px" }}
-            >
-              Edit
-            </button>
+              <button onClick={() => editHabit(index)}>✏️ Edit</button>
 
-            <button
-              onClick={() => deleteHabit(index)}
-              style={{ marginLeft: "10px" }}
-            >
-              Delete
-            </button>
-          </li>
-        ))}
-      </ul>
+              <button onClick={() => deleteHabit(index)}>🗑️ Delete</button>
+            </li>
+          ))}
+        </ul>
+      )}
     </div>
   );
 }
-
 export default App;
