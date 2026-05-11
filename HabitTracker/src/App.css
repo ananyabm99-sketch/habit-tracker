@@ -26,3 +26,15 @@ body {
   background-color: #22c55e;
   transition: width 0.3s ease;
 }
+
+.dark {
+  background-color: #1f2937;
+  color: white;
+}
+
+.dark input,
+.dark button {
+  background-color: #374151;
+  color: white;
+  border: 1px solid #6b7280;
+}

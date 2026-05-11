@@ -8,6 +8,7 @@ interface Habit {
 }
 
 function App() {
+  const [darkMode, setDarkMode] = useState(false);
   const [habitName, setHabitName] = useState("");
   const [searchTerm, setSearchTerm] = useState("");
   const [habits, setHabits] = useState<Habit[]>([]);
@@ -17,7 +18,16 @@ function App() {
     if (savedHabits) {
       setHabits(JSON.parse(savedHabits));
     }
+
+    const savedTheme = localStorage.getItem("darkMode");
+    if (savedTheme) {
+      setDarkMode(JSON.parse(savedTheme));
+    }
   }, []);
+
+  useEffect(() => {
+    localStorage.setItem("darkMode", JSON.stringify(darkMode));
+  }, [darkMode]);
 
   useEffect(() => {
     localStorage.setItem("habits", JSON.stringify(habits));
@@ -102,8 +112,14 @@ function App() {
   );
 
   return (
-    <div className="app-container">
+    <div className={`app-container ${darkMode ? "dark" : ""}`}>
       <h1>Habit Tracker</h1>
+      <button
+        onClick={() => setDarkMode(!darkMode)}
+        style={{ marginBottom: "20px" }}
+      >
+        {darkMode ? "☀️ Light Mode" : "🌙 Dark Mode"}
+      </button>
 
       <h3>📊 Progress Summary</h3>
       <p>Total Habits: {totalHabits}</p>
