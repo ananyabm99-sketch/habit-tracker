@@ -9,6 +9,7 @@ interface Habit {
 
 function App() {
   const [habitName, setHabitName] = useState("");
+  const [searchTerm, setSearchTerm] = useState("");
   const [habits, setHabits] = useState<Habit[]>([]);
 
   useEffect(() => {
@@ -96,6 +97,10 @@ function App() {
   const progress =
     totalHabits === 0 ? 0 : Math.round((completedHabits / totalHabits) * 100);
 
+  const filteredHabits = habits.filter((habit) =>
+    habit.name.toLowerCase().includes(searchTerm.toLowerCase()),
+  );
+
   return (
     <div className="app-container">
       <h1>Habit Tracker</h1>
@@ -108,6 +113,13 @@ function App() {
       <div className="progress-bar">
         <div className="progress-fill" style={{ width: `${progress}%` }}></div>
       </div>
+      <input
+        type="text"
+        placeholder="Search habits..."
+        value={searchTerm}
+        onChange={(e) => setSearchTerm(e.target.value)}
+        style={{ marginBottom: "10px", width: "100%", padding: "8px" }}
+      />
 
       <input
         type="text"
@@ -121,7 +133,7 @@ function App() {
       </button>
 
       <ul>
-        {habits.map((habit, index) => (
+        {filteredHabits.map((habit, index) => (
           <li key={index}>
             <input
               type="checkbox"
