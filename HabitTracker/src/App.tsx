@@ -41,6 +41,27 @@ function App() {
     setHabits(updatedHabits);
   };
 
+  const editHabit = (indexToEdit: number) => {
+    const newName = prompt("Enter new habit name:");
+
+    if (!newName || newName.trim() === "") {
+      return;
+    }
+
+    const updatedHabits = habits.map((habit, index) => {
+      if (index === indexToEdit) {
+        return {
+          ...habit,
+          name: newName,
+        };
+      }
+
+      return habit;
+    });
+
+    setHabits(updatedHabits);
+  };
+
   const toggleHabit = (indexToToggle: number) => {
     const today = new Date().toDateString();
 
@@ -120,6 +141,13 @@ function App() {
             <span style={{ marginLeft: "10px" }}>
               🔥 {habit.streak} day{habit.streak !== 1 ? "s" : ""}
             </span>
+
+            <button
+              onClick={() => editHabit(index)}
+              style={{ marginLeft: "10px" }}
+            >
+              Edit
+            </button>
 
             <button
               onClick={() => deleteHabit(index)}
