@@ -1,134 +1,96 @@
-import "./App.css";
 import { useEffect, useState } from "react";
+import "./App.css";
 
-interface Habit {
+type Habit = {
+  id: number;
   name: string;
   completed: boolean;
   streak: number;
-  lastCompletedDate: string | null;
-}
+  last_completed: string | null;
+};
+const API_URL = "http://127.0.0.1:8000/habits";
 
 function App() {
-  const [darkMode, setDarkMode] = useState(false);
-  const [habitName, setHabitName] = useState("");
-  const [searchTerm, setSearchTerm] = useState("");
   const [habits, setHabits] = useState<Habit[]>([]);
+  const [newHabit, setNewHabit] = useState("");
+
+  const fetchHabits = async () => {
+    const response = await fetch(API_URL);
+    const data = await response.json();
+    setHabits(data);
+  };
 
   useEffect(() => {
-    const savedHabits = localStorage.getItem("habits");
-    if (savedHabits) {
-      setHabits(JSON.parse(savedHabits));
-    }
-
-    const savedTheme = localStorage.getItem("darkMode");
-    if (savedTheme) {
-      setDarkMode(JSON.parse(savedTheme));
-    }
+    fetchHabits();
   }, []);
 
-  useEffect(() => {
-    localStorage.setItem("darkMode", JSON.stringify(darkMode));
-  }, [darkMode]);
+  const addHabit = async () => {
+    if (!newHabit.trim()) return;
 
-  useEffect(() => {
-    localStorage.setItem("habits", JSON.stringify(habits));
-  }, [habits]);
-
-  const addHabit = () => {
-    if (habitName.trim() === "") return;
-
-    const newHabit: Habit = {
-      name: habitName,
-      completed: false,
-      streak: 0,
-      lastCompletedDate: null,
-    };
-
-    setHabits([...habits, newHabit]);
-    setHabitName("");
-  };
-
-  const deleteHabit = (indexToDelete: number) => {
-    const updatedHabits = habits.filter((_, index) => index !== indexToDelete);
-    setHabits(updatedHabits);
-  };
-
-  const editHabit = (indexToEdit: number) => {
-    const newName = prompt("Enter new habit name:");
-
-    if (!newName || newName.trim() === "") {
-      return;
-    }
-
-    const updatedHabits = habits.map((habit, index) => {
-      if (index === indexToEdit) {
-        return {
-          ...habit,
-          name: newName,
-        };
-      }
-
-      return habit;
+    await fetch(API_URL, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        name: newHabit,
+        completed: false,
+      }),
     });
 
-    setHabits(updatedHabits);
+    setNewHabit("");
+    fetchHabits();
   };
 
-  const toggleHabit = (indexToToggle: number) => {
-    const today = new Date().toDateString();
-
-    const updatedHabits = habits.map((habit, index) => {
-      if (index !== indexToToggle) {
-        return habit;
-      }
-
-      const newCompleted = !habit.completed;
-      let newStreak = habit.streak;
-      let newLastCompletedDate = habit.lastCompletedDate;
-
-      if (newCompleted && habit.lastCompletedDate !== today) {
-        newStreak = habit.streak + 1;
-        newLastCompletedDate = today;
-      }
-
-      return {
-        ...habit,
-        completed: newCompleted,
-        streak: newStreak,
-        lastCompletedDate: newLastCompletedDate,
-      };
+  const deleteHabit = async (id: number) => {
+    await fetch(`${API_URL}/${id}`, {
+      method: "DELETE",
     });
 
-    setHabits(updatedHabits);
+    fetchHabits();
   };
 
-  const totalHabits = habits.length;
-  const completedHabits = habits.filter((habit) => habit.completed).length;
-
+  const completedCount = habits.filter((habit) => habit.completed).length;
   const progress =
-    totalHabits === 0 ? 0 : Math.round((completedHabits / totalHabits) * 100);
+    habits.length === 0 ? 0 : (completedCount / habits.length) * 100;
 
-  const filteredHabits = habits.filter((habit) =>
-    habit.name.toLowerCase().includes(searchTerm.toLowerCase()),
-  );
+  const toggleHabit = async (id: number, completed: boolean) => {
+    await fetch(`${API_URL}/${id}`, {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        completed: completed,
+      }),
+    });
+
+    fetchHabits();
+  };
 
   return (
-    <div className={`app-container ${darkMode ? "dark" : ""}`}>
-      {/* Header */}
-      <h1>🌟 Habit Tracker</h1>
-      <p className="subtitle">Build better habits, one day at a time.</p>
+    <div className="app-container">
+      <h1>Habit Tracker</h1>
+      <p className="subtitle">
+        Build strong habits and stay consistent every day.
+      </p>
 
-      {/* Dark Mode Button */}
-      <button className="theme-toggle" onClick={() => setDarkMode(!darkMode)}>
-        {darkMode ? "☀️ Light Mode" : "🌙 Dark Mode"}
-      </button>
-
-      {/* Progress Summary */}
       <div className="summary-card">
-        <h3>📊 Progress Summary</h3>
-        <p>Total Habits: {totalHabits}</p>
-        <p>Completed Today: {completedHabits}</p>
-        <p>Progress: {progress}%</p>
+        <h3>📅 Today</h3>
+        <p>
+          {new Date().toLocaleDateString("en-US", {
+            weekday: "long",
+            year: "numeric",
+            month: "long",
+            day: "numeric",
+          })}
+        </p>
+      </div>
+
+      <div className="summary-card">
+        <h3>Today's Progress</h3>
+        <p>Total Habits: {habits.length}</p>
+        <p>Completed: {completedCount}</p>
 
         <div className="progress-bar">
           <div
@@ -138,58 +100,44 @@ function App() {
         </div>
       </div>
 
-      {/* Search Box */}
-      <input
-        className="search-box"
-        type="text"
-        placeholder="🔍 Search habits..."
-        value={searchTerm}
-        onChange={(e) => setSearchTerm(e.target.value)}
-      />
-
-      {/* Add Habit Section */}
       <div className="input-section">
         <input
           type="text"
-          placeholder="✨ Enter a new habit"
-          value={habitName}
-          onChange={(e) => setHabitName(e.target.value)}
+          placeholder="Enter a new habit..."
+          value={newHabit}
+          onChange={(e) => setNewHabit(e.target.value)}
+          onKeyDown={(e) => e.key === "Enter" && addHabit()}
         />
-
-        <button onClick={addHabit}>➕ Add Habit</button>
+        <button onClick={addHabit}>Add Habit</button>
       </div>
 
-      {/* Empty State or Habit List */}
-      {filteredHabits.length === 0 ? (
+      {habits.length === 0 ? (
         <div className="empty-state">
-          <h3>🎯 No habits found</h3>
-          <p>Add your first habit and start building consistency!</p>
+          <p>No habits added yet. Start by creating one!</p>
         </div>
       ) : (
         <ul>
-          {filteredHabits.map((habit, index) => (
-            <li key={index}>
+          {habits.map((habit) => (
+            <li key={habit.id}>
               <input
                 type="checkbox"
                 checked={habit.completed}
-                onChange={() => toggleHabit(index)}
+                onChange={() => toggleHabit(habit.id, !habit.completed)}
               />
 
               <span
                 style={{
+                  flex: 1,
                   textDecoration: habit.completed ? "line-through" : "none",
+                  opacity: habit.completed ? 0.7 : 1,
                 }}
               >
                 {habit.name}
               </span>
 
-              <span>
-                🔥 {habit.streak} day{habit.streak !== 1 ? "s" : ""}
-              </span>
+              <span>🔥 {habit.streak} day streak</span>
 
-              <button onClick={() => editHabit(index)}>✏️ Edit</button>
-
-              <button onClick={() => deleteHabit(index)}>🗑️ Delete</button>
+              <button onClick={() => deleteHabit(habit.id)}>Delete</button>
             </li>
           ))}
         </ul>
@@ -197,4 +145,5 @@ function App() {
     </div>
   );
 }
+
 export default App;

@@ -8,18 +8,19 @@ body {
   font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
   background: linear-gradient(135deg, #6a11cb 0%, #2575fc 100%);
   min-height: 100vh;
-  padding: 30px;
+  padding: 20px;
 }
 
 /* Main Container */
+
 .app-container {
-  max-width: 900px;
-  margin: 0 auto;
+  width: 100%;
+  min-height: calc(100vh - 60px);
   background: rgba(255, 255, 255, 0.95);
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
-  border-radius: 28px;
-  padding: 40px;
+  border-radius: 24px;
+  padding: 50px 70px;
   box-shadow: 0 25px 60px rgba(0, 0, 0, 0.15);
   color: #1f2937;
 }
@@ -116,11 +117,8 @@ h1 {
 .input-section {
   display: flex;
   gap: 12px;
-  margin-bottom: 20px;
-}
-
-.input-section input {
-  flex: 1;
+  margin-bottom: 25px;
+  width: 100%;
 }
 
 /* Search */
