@@ -1,0 +1,59 @@
+from fastapi import FastAPI
+from fastapi.middleware.cors import CORSMiddleware
+import json
+import os
+
+app = FastAPI()
+
+# Allow frontend (React) to communicate with backend
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
+FILE_NAME = "habits.json"
+
+
+def load_habits():
+    if not os.path.exists(FILE_NAME):
+        return []
+    with open(FILE_NAME, "r") as file:
+        return json.load(file)
+
+
+def save_habits(habits):
+    with open(FILE_NAME, "w") as file:
+        json.dump(habits, file, indent=4)
+
+
+@app.get("/")
+def home():
+    return {"message": "Habit Tracker API is running successfully!"}
+
+
+@app.get("/habits")
+def get_habits():
+    return load_habits()
+
+
+@app.post("/habits")
+def add_habit(habit: dict):
+    habits = load_habits()
+    habit["id"] = len(habits) + 1
+    habits.append(habit)
+    save_habits(habits)
+    return {
+        "message": "Habit added successfully",
+        "habit": habit
+    }
+
+
+@app.delete("/habits/{habit_id}")
+def delete_habit(habit_id: int):
+    habits = load_habits()
+    habits = [h for h in habits if h["id"] != habit_id]
+    save_habits(habits)
+    return {"message": "Habit deleted successfully"}
