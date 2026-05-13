@@ -1,6 +1,8 @@
 import { useEffect, useState } from "react";
 import "./App.css";
 
+const API_URL = `${import.meta.env.VITE_API_URL}/habits`;
+
 type Habit = {
   id: number;
   name: string;
@@ -8,7 +10,6 @@ type Habit = {
   streak: number;
   last_completed: string | null;
 };
-const API_URL = "http://127.0.0.1:8000/habits";
 
 function App() {
   const [habits, setHabits] = useState<Habit[]>([]);
