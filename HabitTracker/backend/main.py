@@ -1,3 +1,6 @@
+from fastapi.middleware.cors import CORSMiddleware
+
+
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from datetime import date, datetime, timedelta
@@ -5,6 +8,15 @@ import json
 import os
 
 app = FastAPI()
+
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],  # Allows requests from your Vercel frontend
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 # Allow React frontend to communicate with this backend
 app.add_middleware(
